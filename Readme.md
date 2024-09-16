@@ -1,4 +1,4 @@
-#Сервер (Python Flask)
+# Сервер (Python Flask)
 1) POST /upload загрузка файла на сервер
 2) GET /download скачивание файда с сервера
 3) Базовая аутентификация (Flask, SqlAlchemy)
