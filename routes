@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, request
+from sqlalchemy import insert
 
 from models import User, Photo, session, engine, Base
 
@@ -20,6 +21,7 @@ def all_photo():
   photo_list = []
   for photo in photos:
     photo_list.append(photo.to_json())
+  session.commit()
   return photo_list
 
 @app.route('/upload', methods = ['POST'])
@@ -29,7 +31,7 @@ def upload_photo(photo_name: str):
 """
   photo = request.form.get('photo_name', type = str)
   user = session.User.id
-  new_photo = sqlite3.binary(Photo(name=photo, user_id = user.id))
+  new_photo = insert(Photo).values(name=photo, user_id = user.id))
   session.add(new_photo)
   session.commit()
   return "Фото успешно сохранен в базу"
