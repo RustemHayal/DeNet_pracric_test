@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from typing import Dict, Any
 
 engine = create_engine('sqlite:///photo_collection.db')
@@ -20,7 +21,17 @@ name - имя пользоваетля, surname-фамилию, email_adress -а
   id = Column(Integer, primary_key=True)
   name = Column(String, nullable=False)
   surname = Column(String, nullable=False)
-  email_adress = Column(String, nullable=False)
+  email = Column(String, nullable=False)
+  
+  @classmethod
+      def get_user_by_email(cls, email: str):
+          try:
+              user = session.query(User).filter(User.email == email).one()
+              return user
+          except NoResultFound:
+              print(f"Пользователь с {email} существует")
+          except MultipleResultsFound:
+              print("Ошибка уникальности индекса")
 
   def __repr__(self):
     return f'Пользователь {self.surname} {self.name}'
