@@ -1,1 +1,37 @@
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base
+from typing import Dict, Any
 
+Base = declarative_base()
+
+class User(Base):
+"""
+Класс пользователя. При подключении нового пользователя необходимо ввести следующие значения:
+name - имя пользоваетля, surname-фамилию, email_adress -адрес электронной почты
+"""
+  __tablename__ = 'users'
+
+  id = Column(Integer, primary_key=True)
+  name = Column(String, nullable=False)
+  surname = Column(String, nullable=False)
+  email_adress = Column(String, nullable=False)
+
+  def __repr__(self):
+    return f'Пользователь {self.surname} {self.name}'
+
+  def to_join(self) -> Dict[str, Any]:
+    return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Photo(Base):
+  __tablename__ = 'photos'
+
+  id = Column(Integer, primary_key = True)
+  name = Column(String, nullable = False)
+  user_id = Column(Integer, ForeignKey('users.id'))
+  user = relashionship("User", backref='photos')
+
+  def __repr__(self):
+    return f'Фото {self.name}'
+
+  def to_join(self) -> Dict[str, Any]:
+    return {c.name: getattr(self, c.name) for c in self.__table__.columns}
