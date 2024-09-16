@@ -1,0 +1,38 @@
+import sqlite3
+from flask import Flask
+
+from models import User, Photo, session, engine, Base
+
+app = Flask(__name__)
+
+@app.before_request
+def before_request_func():
+"""
+Данная функция создает, привязывает базу данных.
+"""
+  Base.metadata.create_all(engine)
+
+@app.route('/upload', methods = ['POST'])
+def uoload_photo():
+"""
+Эндпоинт сохраняет фото введенный пользователем в базу данных.
+"""
+  photo = request.form.get('photo', type = str)
+  user = session.User.query.get(1)
+  new_photo = sqlite3.binary(Photo(name=photo, user_id = user.id))
+  session.add(new_photo)
+  session.commit()
+
+@app.route('/dowmload', methods = ['GET'])
+def download_photo(idx: int):
+"""
+Эндпоинт позволяет скачать изоброжение.
+"""
+  photo = session.query(Photo).filter(id=idx).one()
+  photo.fitchone()
+  photo.save()
+  return photo
+        
+
+if __name__ == '__main__':
+  app.run()
