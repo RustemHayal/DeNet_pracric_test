@@ -1,4 +1,3 @@
-import sqlite3
 from flask import Flask
 
 from models import User, Photo, session, engine, Base
@@ -24,18 +23,18 @@ def all_photo():
   return photo_list
 
 @app.route('/upload', methods = ['POST'])
-def upload_photo():
+def upload_photo(photo_name: str):
 """
 Эндпоинт сохраняет фото введенный пользователем в базу данных.
 """
-  photo = request.form.get('photo', type = str)
+  photo = request.form.get('photo_name', type = str)
   user = session.User.id
   new_photo = sqlite3.binary(Photo(name=photo, user_id = user.id))
   session.add(new_photo)
   session.commit()
   return "Фото успешно сохранен в базу"
 
-@app.route('/dowmload', methods = ['GET'])
+@app.route('/download', methods = ['GET'])
 def download_photo(idx: int):
 """
 Эндпоинт позволяет скачать изоброжение.
