@@ -12,16 +12,28 @@ def before_request_func():
 """
   Base.metadata.create_all(engine)
 
+@app.route('/', methods=['GET'])
+def all_photo():
+"""
+Эндпонит позволяет просмотреть все фото сохраненныне в базе
+"""
+  photos = session.query(Photo).all()
+  photo_list = []
+  for photo in photos:
+    photo_list.append(photo.to_json())
+  return photo_list
+
 @app.route('/upload', methods = ['POST'])
-def uoload_photo():
+def upload_photo():
 """
 Эндпоинт сохраняет фото введенный пользователем в базу данных.
 """
   photo = request.form.get('photo', type = str)
-  user = session.User.query.get(1)
+  user = session.User.id
   new_photo = sqlite3.binary(Photo(name=photo, user_id = user.id))
   session.add(new_photo)
   session.commit()
+  return "Фото успешно сохранен в базу"
 
 @app.route('/dowmload', methods = ['GET'])
 def download_photo(idx: int):
@@ -31,7 +43,7 @@ def download_photo(idx: int):
   photo = session.query(Photo).filter(id=idx).one()
   photo.fitchone()
   photo.save()
-  return photo
+  return "Фото успешно сохранен."
         
 
 if __name__ == '__main__':
